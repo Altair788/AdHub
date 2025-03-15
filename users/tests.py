@@ -19,7 +19,7 @@ class UserModelTest(TestCase):
 
     def test_create_user(self):
         """
-        Тест создания пользователя.
+        Проверяет создание обычного пользователя.
         """
         self.assertEqual(self.user.email, "test@example.com")
         self.assertTrue(self.user.check_password("password123"))
@@ -27,7 +27,7 @@ class UserModelTest(TestCase):
 
     def test_create_superuser(self):
         """
-        Тест создания суперпользователя.
+        Проверяет создание суперпользователя.
         """
         superuser = User.objects.create_superuser(
             email="admin@example.com", password="adminpassword"
@@ -37,7 +37,7 @@ class UserModelTest(TestCase):
 
     def test_generate_token(self):
         """
-        Тест генерации токена.
+        Проверяет генерацию токена для пользователя.
         """
         self.user.generate_token()
         self.assertIsNotNone(self.user.token)
@@ -49,7 +49,7 @@ class UserModelTest(TestCase):
 class UserRegisterAPIViewTest(APITestCase):
     def test_register_user(self):
         """
-        Тест регистрации нового пользователя.
+        Проверяет регистрацию нового пользователя.
         """
         data = {
             "email": "newuser@example.com",
@@ -73,9 +73,10 @@ class UserRegisterAPIViewTest(APITestCase):
 
 
 #  Тесты для подтверждения email
-
-
 class EmailVerificationAPIViewTest(APITestCase):
+    """
+    Проверяет подтверждение email пользователя.
+    """
     def setUp(self):
         self.user = User.objects.create_user(
             email="test@example.com", password="password123", token="testtoken"
@@ -109,7 +110,9 @@ class PasswordResetAPIViewTest(APITestCase):
 
     def test_password_reset_request(self):
         """
-        Тест запроса на сброс пароля.
+        Проверяет запрос на сброс пароля:
+        - Генерация токена.
+        - Отправка email с инструкцией.
         """
         data = {"email": "test@example.com"}
 
@@ -155,7 +158,7 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
 
     def test_password_reset_confirm(self):
         """
-        Тест подтверждения сброса пароля.
+        Проверяет успешное подтверждение сброса пароля.
         """
         data = {
             "uid": self.uid,
@@ -180,7 +183,7 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
 
     def test_password_reset_confirm_invalid_uid(self):
         """
-        Тест подтверждения сброса пароля с неверным uid.
+        Проверяет сброс пароля с неверным uid.
         """
         data = {
             "uid": "invalid_uid",
@@ -201,7 +204,7 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
 
     def test_password_reset_confirm_invalid_token(self):
         """
-        Тест подтверждения сброса пароля с неверным токеном.
+        Проверяет сброс пароля с неверным токеном.
         """
         data = {
             "uid": self.uid,
@@ -221,7 +224,7 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
 
     def test_password_reset_confirm_inactive_user(self):
         """
-        Тест подтверждения сброса пароля для неактивного пользователя.
+        Проверяет сброс пароля для неактивного пользователя.
         """
         self.user.is_active = False
         self.user.save()
