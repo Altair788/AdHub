@@ -49,16 +49,10 @@ class User(AbstractUser):
         help_text="укажите ник телеграм",
     )
     first_name = models.CharField(
-        max_length=50,
-        blank=True,
-        verbose_name="имя",
-        help_text="укажите имя"
+        max_length=50, blank=True, verbose_name="имя", help_text="укажите имя"
     )
     last_name = models.CharField(
-        max_length=50,
-        blank=True,
-        verbose_name="фамилия",
-        help_text="укажите фамилию"
+        max_length=50, blank=True, verbose_name="фамилия", help_text="укажите фамилию"
     )
     token = models.CharField(max_length=32, blank=True, null=True)
     is_active = models.BooleanField(default=False)
@@ -70,7 +64,6 @@ class User(AbstractUser):
         help_text="укажите телефон"
     )
     country = models.CharField(max_length=100, verbose_name="страна", blank=True)
-
 
     image = models.ImageField(
         upload_to="users/avatars/",
@@ -92,7 +85,7 @@ class User(AbstractUser):
         choices=ROLE_CHOICES,
         default=ROLE_USER,
         verbose_name="Роль пользователя",
-        help_text="Выберите роль пользователя: user или admin"
+        help_text="Выберите роль пользователя: user или admin",
     )
 
     def generate_token(self):

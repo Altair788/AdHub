@@ -1,7 +1,7 @@
 import secrets
 
-from django.core.mail import send_mail
 from django.core import signing
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.generics import CreateAPIView
@@ -12,8 +12,11 @@ from rest_framework.views import APIView
 
 from config.settings import DEFAULT_FROM_EMAIL
 from users.models import User
-from users.serializers import (PasswordResetConfirmSerializer,
-                               PasswordResetSerializer, UserSerializer)
+from users.serializers import (
+    PasswordResetConfirmSerializer,
+    PasswordResetSerializer,
+    UserSerializer,
+)
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -113,7 +116,9 @@ class PasswordResetAPIView(APIView):
         # Проверка, активен ли пользователь
         if not user.is_active:
             return Response(
-                {"error": "Пользователь не активен. Подтвердите email для восстановления пароля."},
+                {
+                    "error": "Пользователь не активен. Подтвердите email для восстановления пароля."
+                },
                 status=HTTP_400_BAD_REQUEST,
             )
 

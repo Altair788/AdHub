@@ -122,26 +122,30 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     Note:
         Использует django.core.signing для декодирования uid.
     """
+
     uid = serializers.CharField()
     token = serializers.CharField()
     new_password = serializers.CharField(write_only=True)
 
     def validate(self, data: dict[str, any]):
-        uid = data.get('uid')
-        token = data.get('token')
+        uid = data.get("uid")
+        token = data.get("token")
 
         try:
             # Декодируем uid
             decoded_data = signing.loads(uid)
             user_id = decoded_data["user_id"]
         except (signing.BadSignature, KeyError):
-            raise serializers.ValidationError({"uid": "Неверный идентификатор пользователя."})
-
+            raise serializers.ValidationError(
+                {"uid": "Неверный идентификатор пользователя."}
+            )
 
         # Проверяем, существует ли пользователь с таким uid
         user = User.objects.filter(id=user_id).first()
         if not user:
-            raise serializers.ValidationError({"uid": "Неверный идентификатор пользователя."})
+            raise serializers.ValidationError(
+                {"uid": "Неверный идентификатор пользователя."}
+            )
 
         # Проверяем, совпадает ли токен
         if user.token != token:
@@ -149,20 +153,19 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
         # Проверяем, активен ли пользователь
         if not user.is_active:
-            raise serializers.ValidationError({"uid": "Пользователь не активен. Необходимо подтвердить email"})
+            raise serializers.ValidationError(
+                {"uid": "Пользователь не активен. Необходимо подтвердить email"}
+            )
 
         return data
 
     def save(self) -> None:
         # Декодируем uid
-        decoded_data = signing.loads(self.validated_data['uid'])
+        decoded_data = signing.loads(self.validated_data["uid"])
         user_id = decoded_data["user_id"]
 
-        user = User.objects.get(
-            id=user_id,
-            token=self.validated_data["token"]
-        )
-        user.set_password(self.validated_data['new_password'])
+        user = User.objects.get(id=user_id, token=self.validated_data["token"])
+        user.set_password(self.validated_data["new_password"])
         # Удаляем токен после успешного сброса пароля
         user.token = None
         user.save()

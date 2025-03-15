@@ -1,6 +1,6 @@
 import json
 
-from django.core import signing, mail
+from django.core import mail, signing
 from django.core.mail import EmailMessage
 from django.test import TestCase
 from rest_framework import status
@@ -77,6 +77,7 @@ class EmailVerificationAPIViewTest(APITestCase):
     """
     Проверяет подтверждение email пользователя.
     """
+
     def setUp(self):
         self.user = User.objects.create_user(
             email="test@example.com", password="password123", token="testtoken"
@@ -101,12 +102,10 @@ class EmailVerificationAPIViewTest(APITestCase):
 class PasswordResetAPIViewTest(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            email="test@example.com",
-            password="password123",
-            is_active=True
+            email="test@example.com", password="password123", is_active=True
         )
 
-        print(f"Пользователь в базе данных: {User.objects.all()}")  # Отладочный вывод
+        # print(f"Пользователь в базе данных: {User.objects.all()}")  # Отладочный вывод
 
     def test_password_reset_request(self):
         """
@@ -129,8 +128,10 @@ class PasswordResetAPIViewTest(APITestCase):
         self.assertIsNotNone(self.user.token)
 
         # Проверяем, что сообщение содержит текст
-        message = response.data.get('message', '')
-        self.assertEqual(message, "Инструкция по сбросу пароля отправлена на ваш email.")
+        message = response.data.get("message", "")
+        self.assertEqual(
+            message, "Инструкция по сбросу пароля отправлена на ваш email."
+        )
 
         # Проверяем, что письмо было отправлено
         outbox: list[EmailMessage] = mail.outbox
@@ -144,13 +145,14 @@ class PasswordResetAPIViewTest(APITestCase):
         # Проверяем, что тело письма содержит ссылку
         self.assertIn("http://", email.body)
 
+
 class PasswordResetConfirmAPIViewTest(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             email="test@example.com",
             password="password123",
             token="testtoken",
-            is_active=True
+            is_active=True,
         )
 
         # Кодируем uid для использования в тестах
@@ -200,7 +202,9 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
         # Проверяем статус ответа
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # [ErrorDetail(string='Неверный идентификатор пользователя.', code='invalid')]
-        self.assertEqual(response.data.get("uid")[0], "Неверный идентификатор пользователя.")
+        self.assertEqual(
+            response.data.get("uid")[0], "Неверный идентификатор пользователя."
+        )
 
     def test_password_reset_confirm_invalid_token(self):
         """
@@ -244,5 +248,6 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
         # Проверяем статус ответа
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data.get("uid")[0], "Пользователь не активен. Необходимо подтвердить email"
+            response.data.get("uid")[0],
+            "Пользователь не активен. Необходимо подтвердить email",
         )

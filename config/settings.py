@@ -1,6 +1,5 @@
 import os
 import sys
-
 from datetime import timedelta
 from pathlib import Path
 
@@ -134,7 +133,10 @@ STATIC_URL = "static/"
 
 STATICFILES_DIRS = (
     [os.path.join(BASE_DIR, "static")]
-    if (os.path.exists(os.path.join(BASE_DIR, "static")) and os.listdir(os.path.join(BASE_DIR, "static")))
+    if (
+        os.path.exists(os.path.join(BASE_DIR, "static"))
+        and os.listdir(os.path.join(BASE_DIR, "static"))
+    )
     else []
 )
 
@@ -248,7 +250,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 # это нужно, чтобы при запуске тестов использовалась легкая SQLite, а не PostgreSQL
 
 if "test" in sys.argv:
-    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
     CELERY_TASK_ALWAYS_EAGER = True  # Выполнять задачи синхронно
     CELERY_TASK_EAGER_PROPAGATES = True  # Пропускать ошибки из задач
     DATABASES = {

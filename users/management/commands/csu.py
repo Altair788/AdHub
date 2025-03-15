@@ -1,14 +1,16 @@
 import os
 
-from loguru import logger
 from django.core.management import BaseCommand
+from loguru import logger
 
 from users.models import User
 
 
 class Command(BaseCommand):
-    logger.info(f"{'=' * 20} Начинается создание суперпользователя и "
-                f"обычного пользователя с заданными параметрами.{'=' * 20}")
+    logger.info(
+        f"{'=' * 20} Начинается создание суперпользователя и "
+        f"обычного пользователя с заданными параметрами.{'=' * 20}"
+    )
     help = "Создает суперпользователя и обычного пользователя с заданными параметрами"
 
     def handle(self, *args, **options):
@@ -66,7 +68,9 @@ class Command(BaseCommand):
                 )
             )
         else:
-            logger.info(f"Обычный пользователь с почтой {normal_user_email} уже существует.")
+            logger.info(
+                f"Обычный пользователь с почтой {normal_user_email} уже существует."
+            )
             self.stdout.write(
                 self.style.WARNING(
                     f"Пользователь с почтой {normal_user_email} уже существует."
