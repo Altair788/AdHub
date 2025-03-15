@@ -248,6 +248,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 # это нужно, чтобы при запуске тестов использовалась легкая SQLite, а не PostgreSQL
 
 if "test" in sys.argv:
+    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
     CELERY_TASK_ALWAYS_EAGER = True  # Выполнять задачи синхронно
     CELERY_TASK_EAGER_PROPAGATES = True  # Пропускать ошибки из задач
     DATABASES = {

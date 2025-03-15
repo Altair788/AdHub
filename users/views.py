@@ -103,10 +103,12 @@ class PasswordResetAPIView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        print(f"Данные запроса: {request.data}")  # Отладочный вывод
         serializer = PasswordResetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         user = serializer.save()  # Генерация токена
+        print(f"Пользователь найден: {user.email}, ID: {user.id}")  # Отладочный вывод
 
         # Проверка, активен ли пользователь
         if not user.is_active:
@@ -117,9 +119,11 @@ class PasswordResetAPIView(APIView):
 
         # Кодируем user.id в uid
         uid = signing.dumps({"user_id": user.id})
+        print(f"Закодированный uid: {uid}")  # Отладочный вывод
 
         host = request.get_host()
         url = f"http://{host}/users/password-reset-confirm/{uid}/{user.token}/"
+        print(f"Ссылка для сброса пароля: {url}")  # Отладочный вывод
 
         send_mail(
             subject="Сброс пароля",
