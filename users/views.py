@@ -1,6 +1,7 @@
 import secrets
 
 from django.core.mail import send_mail
+from django.core import signing
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.generics import CreateAPIView
@@ -86,10 +87,17 @@ class PasswordResetAPIView(APIView):
     """
     Представление для запроса сброса пароля.
 
-    - Принимает email пользователя.
-    - Проверяет существование пользователя с указанным email.
-    - Генерирует токен для сброса пароля.
-    - Отправляет письмо с инструкцией по сбросу пароля.
+    Обрабатывает POST-запросы для инициации процесса сброса пароля:
+    - Проверяет существование и активность пользователя по email.
+    - Генерирует уникальный токен для сброса пароля.
+    - Создает закодированный uid на основе ID пользователя.
+    - Отправляет email со ссылкой для сброса пароля, содержащей uid и токен.
+
+    Attributes:
+        permission_classes (tuple): Разрешения доступа (AllowAny).
+
+    Note:
+        uid кодируется с использованием django.core.signing для безопасности.
     """
 
     permission_classes = (AllowAny,)
@@ -100,8 +108,18 @@ class PasswordResetAPIView(APIView):
 
         user = serializer.save()  # Генерация токена
 
+        # Проверка, активен ли пользователь
+        if not user.is_active:
+            return Response(
+                {"error": "Пользователь не активен. Подтвердите email для восстановления пароля."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        # Кодируем user.id в uid
+        uid = signing.dumps({"user_id": user.id})
+
         host = request.get_host()
-        url = f"http://{host}/users/password-reset-confirm/{user.token}/"
+        url = f"http://{host}/users/password-reset-confirm/{uid}/{user.token}/"
 
         send_mail(
             subject="Сброс пароля",
