@@ -80,14 +80,14 @@ class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate_email(self, value):
-        print(f"Проверка email: {value}")  # Отладочный вывод
+        # print(f"Проверка email: {value}")  # Отладочный вывод
         if not User.objects.filter(email=value).exists():
             raise serializers.ValidationError("Пользователь с таким email не найден.")
         return value
 
     def save(self):
         user = User.objects.get(email=self.validated_data["email"])
-        print(f"Пользователь найден: {user.email}, ID: {user.id}")  # Отладочный вывод
+        # print(f"Пользователь найден: {user.email}, ID: {user.id}")  # Отладочный вывод
         # Генерация токена для сброса пароля
         user.token = secrets.token_hex(16)
         user.save()
