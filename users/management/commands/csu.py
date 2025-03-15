@@ -25,6 +25,7 @@ class Command(BaseCommand):
                 "is_staff": True,
                 "is_active": True,
                 "is_superuser": True,
+                "role": "admin",
             },
         )
 
