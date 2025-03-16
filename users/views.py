@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
+from config import settings
 from config.settings import DEFAULT_FROM_EMAIL
 from users.models import User
 from users.serializers import (
@@ -109,15 +110,16 @@ class PasswordResetAPIView(APIView):
         # print(f"Данные запроса: {request.data}")  # Отладочный вывод
         serializer = PasswordResetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        user = serializer.save()  # Генерация токена
-        # print(f"Пользователь найден: {user.email}, ID: {user.id}")  # Отладочный вывод
+        # Генерация токена
+        user = serializer.save()
+        # Отладочный вывод
+        # print(f"Пользователь найден: {user.email}, ID: {user.id}")
 
         # Проверка, активен ли пользователь
         if not user.is_active:
             return Response(
                 {
-                    "error": "Пользователь не активен. Подтвердите email для восстановления пароля."
+                    "error": settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_ERROR_MESSAGE"]
                 },
                 status=HTTP_400_BAD_REQUEST,
             )
@@ -125,22 +127,40 @@ class PasswordResetAPIView(APIView):
         # Кодируем user.id в uid
         uid = signing.dumps({"user_id": user.id})
         # print(f"Закодированный uid: {uid}")  # Отладочный вывод
+        token = user.token
+
+        # Формируем полный URL для сброса пароля
+        reset_url_template = settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_URL"]
+        url = reset_url_template.format(uid=uid, token=token)
+
+        # Определяем протокол (http или https)
+        protocol = "https" if request.is_secure() else "http"
 
         host = request.get_host()
-        url = f"http://{host}/users/password-reset-confirm/{uid}/{user.token}/"
+        # url = f"http://{host}/users/password-reset-confirm/{uid}/{user.token}/"
+        url = f"{protocol}://{host}/{url}"
         # print(f"Ссылка для сброса пароля: {url}")  # Отладочный вывод
 
+        # send_mail(
+        #     subject="Сброс пароля",
+        #     message=f"Для сброса пароля перейдите по ссылке: {url}",
+        #     from_email=DEFAULT_FROM_EMAIL,
+        #     recipient_list=[user.email],
+        # )
+
         send_mail(
-            subject="Сброс пароля",
-            message=f"Для сброса пароля перейдите по ссылке: {url}",
+            subject=settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_EMAIL_SUBJECT"],
+            message=settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_EMAIL_MESSAGE"] + f"{url}",
             from_email=DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
         )
 
+        # return Response(
+        #     {"message": "Инструкция по сбросу пароля отправлена на ваш email."}
+        # )
         return Response(
-            {"message": "Инструкция по сбросу пароля отправлена на ваш email."}
+            {"message": settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_SUCCESS_MESSAGE"]}
         )
-
 
 class PasswordResetConfirmAPIView(APIView):
     """

@@ -259,3 +259,19 @@ if "test" in sys.argv:
             "NAME": BASE_DIR / "test_db.sqlite3",
         }
     }
+
+
+
+# Настройки для сброса пароля
+PASSWORD_RESET_SETTINGS = {
+    # Путь для сброса пароля
+    "PASSWORD_RESET_URL": "users/password-reset-confirm/{uid}/{token}/",
+    # Тема письма
+    "PASSWORD_RESET_EMAIL_SUBJECT": "Сброс пароля",
+    # Текст письма
+    "PASSWORD_RESET_EMAIL_MESSAGE": "Для сброса пароля перейдите по ссылке:",
+    # Сообщение об успешной отправке
+    "PASSWORD_RESET_SUCCESS_MESSAGE": "Инструкция по сбросу пароля отправлена на ваш email.",
+    # Сообщение об ошибке
+    "PASSWORD_RESET_ERROR_MESSAGE": "Пользователь не активен. Подтвердите email для восстановления пароля.",
+}
