@@ -11,15 +11,19 @@ class AdValidator:
     """
 
     def __call__(self, data: dict[str, any]) -> None:
-        title = data.get("title")
-        price = data.get("price")
-        description = data.get("description")
-        image = data.get("image")
-
-        self.validate_title(title)
-        self.validate_price(price)
-        self.validate_description(description)
-        self.validate_image(image)
+        # для реализации PATCH - запроса
+        if "title" in data:
+            title = data.get("title")
+            self.validate_title(title)
+        if "price" in data:
+            price = data.get("price")
+            self.validate_price(price)
+        if "description" in data:
+            description = data.get("description")
+            self.validate_description(description)
+        if "image" in data:
+            image = data.get("image")
+            self.validate_image(image)
 
     def validate_title(self, title: str) -> None:
         """
@@ -68,9 +72,9 @@ class AdValidator:
         Returns:
             None
         """
-
-        if len(description) > 1000:
-            raise ValidationError("Описание не может превышать 1000 символов.")
+        if description:
+            if len(description) > 1000:
+                raise ValidationError("Описание не может превышать 1000 символов.")
 
     def validate_image(self, image: Union[UploadedFile, None]):
         """
