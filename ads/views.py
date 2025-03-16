@@ -13,10 +13,7 @@ class AdCreateAPIView(generics.CreateAPIView):
     permission_classes = (IsAdmin | IsAuthenticated,)
 
     def perform_create(self, serializer):
-        ad = serializer.save()
-        ad.author = self.request.user
-        ad.save()
-
+        serializer.save(author=self.request.user)
 
 class AdListAPIView(generics.ListAPIView):
     serializer_class = AdSerializer
