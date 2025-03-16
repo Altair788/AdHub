@@ -1,18 +1,13 @@
 from django.urls import path
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
 
 from users.apps import UsersConfig
-from users.views import (
-    EmailVerificationAPIView,
-    PasswordResetAPIView,
-    PasswordResetConfirmAPIView,
-    UserDestroyAPIView,
-    UserListAPIView,
-    UserRegisterAPIView,
-    UserRetrieveAPIView,
-    UserUpdateAPIView,
-)
+from users.views import (EmailVerificationAPIView, PasswordResetAPIView,
+                         PasswordResetConfirmAPIView, UserDestroyAPIView,
+                         UserListAPIView, UserRegisterAPIView,
+                         UserRetrieveAPIView, UserUpdateAPIView)
 
 app_name = UsersConfig.name
 
@@ -29,7 +24,6 @@ urlpatterns = [
         PasswordResetConfirmAPIView.as_view(),
         name="password_reset_confirm",
     ),
-
     path("", UserListAPIView.as_view(), name="user-list"),
     path("<int:pk>/", UserRetrieveAPIView.as_view(), name="user-retrieve"),
     path("update/<int:pk>/", UserUpdateAPIView.as_view(), name="user-update"),

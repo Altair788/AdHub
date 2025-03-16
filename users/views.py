@@ -13,11 +13,8 @@ from rest_framework.views import APIView
 from config import settings
 from config.settings import DEFAULT_FROM_EMAIL
 from users.models import User
-from users.serializers import (
-    PasswordResetConfirmSerializer,
-    PasswordResetSerializer,
-    UserSerializer,
-)
+from users.serializers import (PasswordResetConfirmSerializer,
+                               PasswordResetSerializer, UserSerializer)
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -150,7 +147,9 @@ class PasswordResetAPIView(APIView):
         if not user.is_active:
             return Response(
                 {
-                    "error": settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_ERROR_MESSAGE"]
+                    "error": settings.PASSWORD_RESET_SETTINGS[
+                        "PASSWORD_RESET_ERROR_MESSAGE"
+                    ]
                 },
                 status=HTTP_400_BAD_REQUEST,
             )
@@ -181,14 +180,20 @@ class PasswordResetAPIView(APIView):
 
         send_mail(
             subject=settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_EMAIL_SUBJECT"],
-            message=settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_EMAIL_MESSAGE"] + f"{url}",
+            message=settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_EMAIL_MESSAGE"]
+            + f"{url}",
             from_email=DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
         )
 
         return Response(
-            {"message": settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_SUCCESS_MESSAGE"]}
+            {
+                "message": settings.PASSWORD_RESET_SETTINGS[
+                    "PASSWORD_RESET_SUCCESS_MESSAGE"
+                ]
+            }
         )
+
 
 class PasswordResetConfirmAPIView(APIView):
     """

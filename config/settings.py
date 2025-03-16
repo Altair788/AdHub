@@ -261,7 +261,6 @@ if "test" in sys.argv:
     }
 
 
-
 # Настройки для сброса пароля
 PASSWORD_RESET_SETTINGS = {
     # Путь для сброса пароля
