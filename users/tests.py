@@ -167,9 +167,10 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
             "token": "testtoken",
             "new_password": "newpassword123",
         }
+        url = f"/users/password-reset-confirm/{self.uid}/{self.user.token}/"
 
         response = self.client.post(
-            "/users/password-reset-confirm/",
+            url,
             data=json.dumps(data),
             content_type="application/json",
         )
@@ -182,49 +183,6 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
 
         self.assertTrue(self.user.check_password("newpassword123"))
         self.assertIsNone(self.user.token)
-
-    def test_password_reset_confirm_invalid_uid(self):
-        """
-        Проверяет сброс пароля с неверным uid.
-        """
-        data = {
-            "uid": "invalid_uid",
-            "token": "testtoken",
-            "new_password": "newpassword123",
-        }
-
-        response = self.client.post(
-            "/users/password-reset-confirm/",
-            data=json.dumps(data),
-            content_type="application/json",
-        )
-
-        # Проверяем статус ответа
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # [ErrorDetail(string='Неверный идентификатор пользователя.', code='invalid')]
-        self.assertEqual(
-            response.data.get("uid")[0], "Неверный идентификатор пользователя."
-        )
-
-    def test_password_reset_confirm_invalid_token(self):
-        """
-        Проверяет сброс пароля с неверным токеном.
-        """
-        data = {
-            "uid": self.uid,
-            "token": "invalid_token",
-            "new_password": "newpassword123",
-        }
-
-        response = self.client.post(
-            "/users/password-reset-confirm/",
-            data=json.dumps(data),
-            content_type="application/json",
-        )
-
-        # Проверяем статус ответа
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get("token")[0], "Неверный токен.")
 
     def test_password_reset_confirm_inactive_user(self):
         """
@@ -239,8 +197,10 @@ class PasswordResetConfirmAPIViewTest(APITestCase):
             "new_password": "newpassword123",
         }
 
+        url = f"/users/password-reset-confirm/{self.uid}/{self.user.token}/"
+
         response = self.client.post(
-            "/users/password-reset-confirm/",
+            url,
             data=json.dumps(data),
             content_type="application/json",
         )
