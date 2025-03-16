@@ -174,7 +174,7 @@ if CACHE_ENABLED:
     }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=300),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
