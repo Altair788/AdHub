@@ -8,6 +8,7 @@ class AdSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели Ad.
     """
+
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(required=True)
     price = serializers.IntegerField(required=True)
@@ -27,14 +28,13 @@ class AdSerializer(serializers.ModelSerializer):
         model = Ad
         fields = (
             "id",  # Только для чтения
-            "title", # Обязателен для заполнения
+            "title",  # Обязателен для заполнения
             "price",  # Обязателен для заполнения
             "description",  # Не обязателен для заполнения
             "author",  # Только для чтения
             "created_at",  # Только для чтения
             "image",  # Не обязателен для заполнения
         )
-
 
     def validate(self, data):
         """
@@ -43,9 +43,3 @@ class AdSerializer(serializers.ModelSerializer):
         validator = AdValidator()
         validator(data)
         return data
-
-
-
-
-
-

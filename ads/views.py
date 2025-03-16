@@ -4,15 +4,13 @@ from rest_framework.permissions import IsAuthenticated
 from ads.models import Ad
 from ads.paginations import AdPaginator
 from ads.serializers import AdSerializer
-from users.permissions import IsAuthor, IsAdmin
+from users.permissions import IsAdmin, IsAuthor
 
 
 class AdCreateAPIView(generics.CreateAPIView):
     serializer_class = AdSerializer
     queryset = Ad.objects.all()
-    permission_classes = (
-        IsAdmin | IsAuthenticated,
-    )
+    permission_classes = (IsAdmin | IsAuthenticated,)
 
     def perform_create(self, serializer):
         ad = serializer.save()
@@ -30,9 +28,7 @@ class AdListAPIView(generics.ListAPIView):
 class AdRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = AdSerializer
     queryset = Ad.objects.all()
-    permission_classes = (
-        IsAuthenticated | IsAdmin,
-    )
+    permission_classes = (IsAuthenticated | IsAdmin,)
 
 
 class AdUpdateAPIView(generics.UpdateAPIView):

@@ -18,7 +18,6 @@ class Ad(models.Model):
         author (ForeignKey): Пользователь, создавший объявление.
         created_at (DateTimeField): Дата и время создания объявления.
         image (ImageField): Изображение товара (опционально).
-        is_active (bool): Признак активности объявления.
     """
 
     title = models.CharField(

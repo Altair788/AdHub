@@ -10,7 +10,6 @@ class CanViewAPI(permissions.BasePermission):
         return request.user.is_staff
 
 
-
 class IsAdmin(permissions.BasePermission):
     """
     Проверяет, является ли пользователь администратором.
@@ -26,6 +25,6 @@ class IsAuthor(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if obj.author== request.user:
+        if obj.author == request.user:
             return True
         return False
