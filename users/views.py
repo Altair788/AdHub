@@ -155,9 +155,6 @@ class PasswordResetAPIView(APIView):
             recipient_list=[user.email],
         )
 
-        # return Response(
-        #     {"message": "Инструкция по сбросу пароля отправлена на ваш email."}
-        # )
         return Response(
             {"message": settings.PASSWORD_RESET_SETTINGS["PASSWORD_RESET_SUCCESS_MESSAGE"]}
         )
@@ -173,7 +170,9 @@ class PasswordResetConfirmAPIView(APIView):
 
     permission_classes = (AllowAny,)
 
-    def post(self, request):
+    def post(self, request, uid, token):
+        # Добавляем uid и token в данные запроса
+        request.data.update({"uid": uid, "token": token})
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

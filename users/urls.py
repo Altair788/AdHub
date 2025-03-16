@@ -25,10 +25,11 @@ urlpatterns = [
     ),
     path("password-reset/", PasswordResetAPIView.as_view(), name="password_reset"),
     path(
-        "password-reset-confirm/",
+        "password-reset-confirm/<str:uid>/<str:token>/",
         PasswordResetConfirmAPIView.as_view(),
         name="password_reset_confirm",
     ),
+
     path("", UserListAPIView.as_view(), name="user-list"),
     path("<int:pk>/", UserRetrieveAPIView.as_view(), name="user-retrieve"),
     path("update/<int:pk>/", UserUpdateAPIView.as_view(), name="user-update"),
