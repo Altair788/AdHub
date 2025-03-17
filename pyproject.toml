@@ -37,12 +37,23 @@ django-extensions = "^3.2.3"
 loguru = "^0.7.3"
 django-celery-beat = "^2.7.0"
 gunicorn = "^23.0.0"
-
-[tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
-pytest-django = "^4.10.0"
+pytest-cov = "^6.0.0"
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+
+[tool.coverage.run]
+omit = [
+    "*/migrations/*",  # Исключаем все файлы миграций
+    "*/__init__.py",   # Исключаем все служебные init.py
+    "manage.py",       # Исключаем manage.py
+    "config/asgi.py",  # Исключаем служебные файлы проекта
+    "config/settings.py",
+    "config/wsgi.py",
+    "users/tests.py",
+    "tests.py",
+]
