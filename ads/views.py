@@ -1,6 +1,8 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
+from ads.filters import AdFilter
 from ads.models import Ad
 from ads.paginations import AdPaginator
 from ads.serializers import AdSerializer
@@ -20,6 +22,10 @@ class AdListAPIView(generics.ListAPIView):
     serializer_class = AdSerializer
     queryset = Ad.objects.all().order_by("-created_at")
     pagination_class = AdPaginator
+    # подключение фильтрации
+    filter_backends = [DjangoFilterBackend]
+    # используемый фильтр
+    filterset_class = AdFilter
     permission_classes = ()
 
 
