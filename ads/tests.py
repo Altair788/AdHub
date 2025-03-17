@@ -185,3 +185,73 @@ class AdTestCase(APITestCase):
 
         # Проверяем, что объявление больше не существует в базе данных
         self.assertFalse(Ad.objects.filter(id=ad.id).exists())
+
+    def test_filter_ads_by_title(self):
+        """
+        Проверяет фильтрацию объявлений по названию.
+        """
+        # Создаем несколько объявлений
+        Ad.objects.create(title="Ноутбук Apple MacBook Pro", price=150000, author=self.user)
+        Ad.objects.create(title="Смартфон Samsung Galaxy S21", price=80000, author=self.user)
+        Ad.objects.create(title="Наушники Sony WH-1000XM4", price=25000, author=self.user)
+
+        # Проверяем, что объявления созданы
+        # ads = Ad.objects.all()
+        # print("Объявления в базе:", ads)
+
+
+
+        # Фильтруем объявления по ключевому слову "ноутбук"
+        url = reverse("ads:ads-list")
+        # регистронезависимый поиск
+        response = self.client.get(url, {"title": "ноутбук"})
+
+        # # Выводим ответ для отладки
+        # print("Ответ фильтрации:", response.json())
+
+        # 1 гипотеза
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 2 гипотеза (структура ответа)
+        response_data = response.json()
+        # print(response_data)
+
+        # Проверяем количество найденных объявлений
+        self.assertEqual(response_data["count"], 1)
+        self.assertEqual(len(response_data["results"]), 1)
+
+        # Проверяем содержимое найденного объявления
+        self.assertEqual(response_data["results"][0]["title"], "Ноутбук Apple MacBook Pro")
+        self.assertEqual(response_data["results"][0]["price"], 150000)
+        self.assertEqual(response_data["results"][0]["author"], self.user.id)
+
+        # Фильтруем объявления по ключевому слову "Samsung"
+        response = self.client.get(url, {"title": "Samsung"})
+
+        # 3 гипотеза
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 4 гипотеза (структура ответа)
+        response_data = response.json()
+
+        # Проверяем количество найденных объявлений
+        self.assertEqual(response_data["count"], 1)
+        self.assertEqual(len(response_data["results"]), 1)
+
+        # Проверяем содержимое найденного объявления
+        self.assertEqual(response_data["results"][0]["title"], "Смартфон Samsung Galaxy S21")
+        self.assertEqual(response_data["results"][0]["price"], 80000)
+        self.assertEqual(response_data["results"][0]["author"], self.user.id)
+
+        # Фильтруем объявления по ключевому слову, которого нет в названиях
+        response = self.client.get(url, {"title": "несуществующий"})
+
+        # 5 гипотеза
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 6 гипотеза (структура ответа)
+        response_data = response.json()
+
+        # Проверяем, что объявления не найдены
+        self.assertEqual(response_data["count"], 0)
+        self.assertEqual(len(response_data["results"]), 0)
