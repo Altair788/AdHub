@@ -19,17 +19,29 @@
 - **API в формате camelCase**:
     Все эндпоинты возвращают данные в формате camelCase для удобства работы с фронтендом.
 
+Ваш список технологий в README.md хорошо отражает основные инструменты, используемые в проекте. Однако, учитывая содержимое вашего `pyproject.toml`, можно внести некоторые дополнения и уточнения:
+
 ## Технологии
 
-- Django
+- Django 4.2.2
 - Django REST Framework
 - PostgreSQL
 - Simple JWT
 - CORS headers
-- Swagger
+- Swagger (drf-yasg)
+- Redoc
 - Docker
 - pytest
 - Poetry
+- Celery
+- Redis
+- Gunicorn
+- drf-spectacular (для API документации)
+- django-filter
+- djangorestframework-camel-case
+- Pillow (для работы с изображениями)
+- Coverage (для анализа покрытия кода тестами)
+- Loguru (для улучшенного логирования)
 
 ---
 
@@ -93,7 +105,6 @@ SUPERUSER_EMAIL=admin@example.com
 SUPERUSER_PASSWORD=adminpassword123
 NORMAL_USER_EMAIL=user@example.com
 NORMAL_USER_PASSWORD=userpassword123
-TELEGRAM_BOT_TOKEN=ваш_токен_бота
 REDIS_URL=redis://127.0.0.1:6379/0
 ```
 
@@ -118,6 +129,40 @@ python manage.py csu
 2. Обычный пользователь: `NORMAL_USER_EMAIL` и `NORMAL_USER_PASSWORD`.
 
 Если пользователи уже существуют, команда уведомит об этом.
+
+### Команда `fill_db` (Fill Database)
+Для заполнения базы данных тестовыми данными выполните:
+
+```bash
+python manage.py fill_db
+```
+
+Эта команда создает:
+- Двух тестовых пользователей (один с ролью администратора, другой - обычный пользователь)
+- Несколько тестовых объявлений
+- Несколько тестовых отзывов
+
+После выполнения команда выводит информацию о созданных пользователях, их ролях и количестве созданных объектов.
+
+**Примечание:** Перед повторным выполнением команды `fill_db` рекомендуется очистить базу данных от предыдущих тестовых записей во избежание дублирования данных.
+
+### Создание и загрузка фикстур
+
+Для создания фикстуры групп пользователей выполните:
+
+```bash
+python3 manage.py dumpdata auth.group --indent 2 > users/fixtures/groups.json
+```
+
+Эта команда создаст файл `groups.json` в директории `users/fixtures/` с данными о группах пользователей.
+
+Для загрузки данных из созданной фикстуры в базу данных используйте команду:
+
+```bash
+python3 manage.py loaddata users/fixtures/groups.json
+```
+
+Эта команда загрузит группы пользователей из файла `groups.json` в базу данных.
 
 ---
 
@@ -160,146 +205,69 @@ python manage.py csu
 
 ## Запуск с использованием Docker
 
-1. Убедитесь, что у вас установлены Docker и Docker Compose.
+1. У вас должны быть установлены Docker и Docker Compose.
 
+Перед запуском контейнеров убедитесь, что в .env у вас POSTGRES_HOST=db
 2. Запустите контейнеры:
    ```bash
    docker-compose up -d
    ```
 
-3. Приложение будет доступно по адресу `http://localhost:8000`.
+3. Приложение будет доступно по адресу `http://localhost:80`.
 
 ---
 
 ## API Документация
 
-Документация API доступна по адресу `/swagger/` после запуска сервера.
-
----
-
-## Эндпоинты
-
-### Пользователи
-- `POST /register/` — регистрация пользователя.
-- `POST /email-confirm/` — подтверждение email.
-- `POST /password-reset/` — запрос на сброс пароля.
-- `POST /password-reset-confirm/` — подтверждение сброса пароля.
-- `GET /users/` — получение списка пользователей.
-- `GET /users/{id}/` — получение информации о пользователе.
-- `PUT /users/{id}/` — обновление информации о пользователе.
-- `DELETE /users/{id}/` — удаление пользователя.
-- `POST /login/` — получение JWT токенов (логин).
-- `POST /token/refresh/` — обновление JWT токена.
-
-### Объявления
-- `GET /ads/` — получение списка объявлений с пагинацией (4 объекта на страницу).
-- `POST /ads/` — создание нового объявления.
-- `GET /ads/{id}/` — получение информации о конкретном объявлении.
-- `PUT /ads/{id}/` — обновление объявления.
-- `DELETE /ads/{id}/` — удаление объявления.
-- `GET /ads/?search={query}` — поиск объявлений по названию.
-
-### Отзывы
-- `GET /ads/{id}/reviews/` — получение списка отзывов для объявления.
-- `POST /ads/{id}/reviews/` — создание отзыва для объявления.
-- `PUT /ads/{id}/reviews/{review_id}/` — обновление отзыва.
-- `DELETE /ads/{id}/reviews/{review_id}/` — удаление отзыва.
+Документация API доступна по адресу `/swagger/` или `/redoc/` после запуска сервера.
 
 ---
 
 ## Тестирование
+Текущее покрытие тестами составляет 86% кода проекта.
+Для запуска тестов вы можете использовать следующие команды:
 
-Для запуска тестов используйте команду:
+1. Запуск всех тестов:
 ```bash
-pytest
+python3 manage.py test
 ```
 
----
-
-## Структура проекта
-
-```
-AdHub/
-│
-├── ads/
-│   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── tests.py
-│
-├── users/
-│   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── tests.py
-│
-├── config/
-│   ├── settings.py
-│   └── urls.py
-│
-├── Dockerfile
-├── docker-compose.yml
-├── pyproject.toml
-└── README.md
+2. Запуск тестов для конкретного приложения (например, для приложения 'ads'):
+```bash
+python3 manage.py test ads
 ```
 
+3. Запуск тестов с покрытием кода:
+```bash
+coverage run --source='.' manage.py test
+```
+
+4. Просмотр отчета о покрытии кода:
+```bash
+coverage report
+```
+
+5. Запуск отдельного теста:
+```bash
+python3 manage.py test ads.tests.AdTestCase.test_create_ad
+```
 ---
 
-## Настройка удаленного сервера и деплой
+## Ключевые особенности проекта
 
-1. Обновите систему:
-   ```bash
-   sudo apt update && sudo apt upgrade -y
-   ```
+- **Усиленная система безопасности**:
+  - Использование закодированных UID вместо простых ID для идентификации объектов.
+  - Токен-аутентификация с переменным токеном для повышенной безопасности.
+  - Шифрование паролей пользователей перед сохранением в базу данных.
 
-2. Установите Docker, следуя [официальной инструкции](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository).
+- **Оптимизация для фронтенд-разработки**:
+  - Вывод данных API в формате camelCase для удобства интеграции с фронтендом.
 
-3. Настройте файрвол:
-   ```bash
-   sudo ufw allow 22/tcp
-   sudo ufw allow 80/tcp
-   sudo ufw allow 443/tcp
-   sudo ufw enable
-   sudo ufw status
-   ```
+- **Гибкая архитектура API**:
+  - Использование generic views Django REST Framework для поддержки частичного обновления объектов (PATCH и PUT запросы).
 
-4. Настройте GitHub Secrets в настройках репозитория (Settings -> Secrets and variables -> Actions):
-   - Данные базы данных: `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`
-   - Настройки Django: `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS`
-   - Доступ к Docker Hub: `DOCKER_HUB_USERNAME`, `DOCKER_HUB_ACCESS_TOKEN`
-   - SSH-доступ: `SSH_USER`, `SSH_KEY`, `SERVER_IP`
-   - Настройки Celery: `CELERY_BROKER_URL`, `CELERY_BACKEND`
-   - Настройки email: 
-     - `EMAIL_HOST`
-     - `EMAIL_PORT`
-     - `EMAIL_HOST_USER`
-     - `EMAIL_HOST_PASSWORD`
-     - `EMAIL_USE_SSL`
-     - `EMAIL_USE_TLS`
-   - Настройки Telegram-бота: 
-     - `TELEGRAM_BOT_TOKEN`
-   - Настройки для создания пользователей: 
-     - `SUPERUSER_EMAIL`
-     - `SUPERUSER_PASSWORD`
-     - `NORMAL_USER_EMAIL`
-     - `NORMAL_USER_PASSWORD`
-
-5. Запуск CI/CD:
-   - Push изменений в репозиторий автоматически запустит GitHub Actions workflow.
-   - Workflow выполнит линтинг, тесты, сборку Docker-образа и деплой на сервер.
-
-6. Проверка деплоя:
-   После завершения workflow приложение будет доступно по IP-адресу сервера на порту 80.
-
----
-
-## Доступ к развернутому приложению
-
-Вы можете получить доступ к административной панели приложения по следующему адресу:
-
-[http://130.193.54.21/admin/login/?next=/admin/](http://130.193.54.21/admin/login/?next=/admin/)
-
-**Важно:** Этот URL предоставляет доступ к административной панели приложения. Убедитесь, что вы используете соответствующие учетные данные для входа.
+- **Надежная валидация данных**:
+  - Двухуровневая валидация: на уровне модели (в методе clean) и на уровне API (в валидаторах).
 
 ---
 
