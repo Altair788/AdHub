@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "users",
     "ads",
+    "reviews",
 ]
 
 REST_FRAMEWORK = {
