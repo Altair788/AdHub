@@ -14,7 +14,9 @@ class Command(BaseCommand):
             password='testpass123',
             first_name='Иван',
             last_name='Петров',
-            phone='+79161234567'
+            phone='+79161234567',
+            is_active=True,  # Устанавливаем активный статус
+            role=User.ROLE_ADMIN  # Назначаем роль администратора
         )
 
         user2 = User.objects.create_user(
@@ -22,7 +24,9 @@ class Command(BaseCommand):
             password='testpass123',
             first_name='Мария',
             last_name='Сидорова',
-            phone='+79167654321'
+            phone='+79167654321',
+            is_active=True,  # Устанавливаем активный статус
+            role=User.ROLE_USER  # Назначаем роль пользователя
         )
 
         # Список тестовых объявлений
@@ -65,15 +69,15 @@ class Command(BaseCommand):
             [Review(**review_data) for review_data in reviews_data]
         )
 
-        self.stdout.write(
-            self.style.SUCCESS(f'Successfully created:')
-        )
-        self.stdout.write(
-            self.style.SUCCESS(f'- {User.objects.count()} users')
-        )
-        self.stdout.write(
-            self.style.SUCCESS(f'- {Ad.objects.count()} ads')
-        )
-        self.stdout.write(
-            self.style.SUCCESS(f'- {Review.objects.count()} reviews')
-        )
+        # Вывод информации о созданных пользователях
+        self.stdout.write(self.style.SUCCESS("Созданные пользователи:"))
+        users = User.objects.all()
+        for user in users:
+            role = "Администратор" if user.role == User.ROLE_ADMIN else "Пользователь"
+            self.stdout.write(f"- {user.email} ({role})")
+
+        # Вывод статистики по созданным данным
+        self.stdout.write(self.style.SUCCESS(f'\nУспешно создано:'))
+        self.stdout.write(self.style.SUCCESS(f'- {User.objects.count()} пользователей'))
+        self.stdout.write(self.style.SUCCESS(f'- {Ad.objects.count()} объявлений'))
+        self.stdout.write(self.style.SUCCESS(f'- {Review.objects.count()} отзывов'))
