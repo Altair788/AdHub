@@ -15,9 +15,10 @@ class AdCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+
 class AdListAPIView(generics.ListAPIView):
     serializer_class = AdSerializer
-    queryset = Ad.objects.all().order_by('-created_at')
+    queryset = Ad.objects.all().order_by("-created_at")
     pagination_class = AdPaginator
     permission_classes = ()
 
