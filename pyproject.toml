@@ -28,17 +28,16 @@ django-cors-headers = "^4.7.0"
 requests = "^2.32.3"
 celery = "^5.4.0"
 pydantic = "^2.10.6"
-dependency-injector = "^4.46.0"
 pony = "^0.7.19"
 python-slugify = "^8.0.4"
 djangorestframework-camel-case = "^1.4.2"
 drf-spectacular = "^0.28.0"
 django-extensions = "^3.2.3"
 loguru = "^0.7.3"
-django-celery-beat = "^2.7.0"
 gunicorn = "^23.0.0"
 pytest = "^8.3.5"
 pytest-cov = "^6.0.0"
+django-celery-beat = "^2.7.0"
 
 
 [build-system]
