@@ -191,15 +191,19 @@ class AdTestCase(APITestCase):
         Проверяет фильтрацию объявлений по названию.
         """
         # Создаем несколько объявлений
-        Ad.objects.create(title="Ноутбук Apple MacBook Pro", price=150000, author=self.user)
-        Ad.objects.create(title="Смартфон Samsung Galaxy S21", price=80000, author=self.user)
-        Ad.objects.create(title="Наушники Sony WH-1000XM4", price=25000, author=self.user)
+        Ad.objects.create(
+            title="Ноутбук Apple MacBook Pro", price=150000, author=self.user
+        )
+        Ad.objects.create(
+            title="Смартфон Samsung Galaxy S21", price=80000, author=self.user
+        )
+        Ad.objects.create(
+            title="Наушники Sony WH-1000XM4", price=25000, author=self.user
+        )
 
         # Проверяем, что объявления созданы
         # ads = Ad.objects.all()
         # print("Объявления в базе:", ads)
-
-
 
         # Фильтруем объявления по ключевому слову "ноутбук"
         url = reverse("ads:ads-list")
@@ -221,7 +225,9 @@ class AdTestCase(APITestCase):
         self.assertEqual(len(response_data["results"]), 1)
 
         # Проверяем содержимое найденного объявления
-        self.assertEqual(response_data["results"][0]["title"], "Ноутбук Apple MacBook Pro")
+        self.assertEqual(
+            response_data["results"][0]["title"], "Ноутбук Apple MacBook Pro"
+        )
         self.assertEqual(response_data["results"][0]["price"], 150000)
         self.assertEqual(response_data["results"][0]["author"], self.user.id)
 
@@ -239,7 +245,9 @@ class AdTestCase(APITestCase):
         self.assertEqual(len(response_data["results"]), 1)
 
         # Проверяем содержимое найденного объявления
-        self.assertEqual(response_data["results"][0]["title"], "Смартфон Samsung Galaxy S21")
+        self.assertEqual(
+            response_data["results"][0]["title"], "Смартфон Samsung Galaxy S21"
+        )
         self.assertEqual(response_data["results"][0]["price"], 80000)
         self.assertEqual(response_data["results"][0]["author"], self.user.id)
 

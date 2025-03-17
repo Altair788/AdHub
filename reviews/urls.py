@@ -1,9 +1,13 @@
 from django.urls import path
 
 from reviews.apps import ReviewsConfig
-from reviews.views import (ReviewCreateAPIView, ReviewDestroyAPIView,
-                           ReviewListAPIView, ReviewRetrieveAPIView,
-                           ReviewUpdateAPIView)
+from reviews.views import (
+    ReviewCreateAPIView,
+    ReviewDestroyAPIView,
+    ReviewListAPIView,
+    ReviewRetrieveAPIView,
+    ReviewUpdateAPIView,
+)
 
 app_name = ReviewsConfig.name
 
