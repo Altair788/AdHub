@@ -13,15 +13,9 @@ class ReviewTestCase(APITestCase):
     def setUp(self) -> None:
         # Создаем пользователя и объявление для тестов
         self.user = User.objects.create_user(
-            email="test@example.com",
-            password="testpass",
-            is_active=True
+            email="test@example.com", password="testpass", is_active=True
         )
-        self.ad = Ad.objects.create(
-            title="Test Ad",
-            price=1000,
-            author=self.user
-        )
+        self.ad = Ad.objects.create(title="Test Ad", price=1000, author=self.user)
 
         # Аутентифицируем клиент
         self.client.force_authenticate(user=self.user)
@@ -30,24 +24,16 @@ class ReviewTestCase(APITestCase):
         """
         Проверяет создание отзыва и корректность ответа.
         """
-        data = {
-            "text": "Great ad!",
-            "ad": self.ad.id
-        }
+        data = {"text": "Great ad!", "ad": self.ad.id}
 
         url = reverse("reviews:review-create")
 
         response = self.client.post(
-            url,
-            data=json.dumps(data),
-            content_type="application/json"
+            url, data=json.dumps(data), content_type="application/json"
         )
 
         # 1 гипотеза
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_201_CREATED
-        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # 2 гипотеза
         response_data = response.json()
@@ -74,10 +60,7 @@ class ReviewTestCase(APITestCase):
         response = self.client.get(url)
 
         # 1 гипотеза
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 2 гипотеза (структура ответа)
         response_data = response.json()
@@ -100,21 +83,14 @@ class ReviewTestCase(APITestCase):
         """
         Проверяет получение одного отзыва.
         """
-        review = Review.objects.create(
-            text="Test review",
-            author=self.user,
-            ad=self.ad
-        )
+        review = Review.objects.create(text="Test review", author=self.user, ad=self.ad)
 
         url = reverse("reviews:review-retrieve", kwargs={"pk": review.pk})
 
         response = self.client.get(url)
 
         # 1 гипотеза
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 2 гипотеза (структура ответа)
         response_data = response.json()
@@ -131,36 +107,24 @@ class ReviewTestCase(APITestCase):
         response = self.client.get(url)
 
         # 1 гипотеза
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_404_NOT_FOUND
-        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_patch_review(self):
         """
         Проверяет частичное обновление отзыва.
         """
-        review = Review.objects.create(
-            text="Old review",
-            author=self.user,
-            ad=self.ad
-        )
+        review = Review.objects.create(text="Old review", author=self.user, ad=self.ad)
 
         url = reverse("reviews:review-update", kwargs={"pk": review.pk})
 
         data = {"text": "Updated review"}
 
         response = self.client.patch(
-            url,
-            data=json.dumps(data),
-            content_type="application/json"
+            url, data=json.dumps(data), content_type="application/json"
         )
 
         # 1 гипотеза
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 2 гипотеза - проверка, что данные действительно обновились
         review.refresh_from_db()
@@ -176,30 +140,18 @@ class ReviewTestCase(APITestCase):
         """
         Проверяет полное обновление отзыва.
         """
-        review = Review.objects.create(
-            text="Old review",
-            author=self.user,
-            ad=self.ad
-        )
+        review = Review.objects.create(text="Old review", author=self.user, ad=self.ad)
 
         url = reverse("reviews:review-update", kwargs={"pk": review.pk})
 
-        data = {
-            "text": "Completely updated review",
-            "ad": self.ad.id
-        }
+        data = {"text": "Completely updated review", "ad": self.ad.id}
 
         response = self.client.put(
-            url,
-            data=json.dumps(data),
-            content_type="application/json"
+            url, data=json.dumps(data), content_type="application/json"
         )
 
         # 1 гипотеза
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 2 гипотеза - проверка, что данные действительно обновились
         review.refresh_from_db()
@@ -216,11 +168,7 @@ class ReviewTestCase(APITestCase):
         """
         Проверяет удаление отзыва.
         """
-        review = Review.objects.create(
-            text="Test review",
-            author=self.user,
-            ad=self.ad
-        )
+        review = Review.objects.create(text="Test review", author=self.user, ad=self.ad)
 
         # Убедимся, что отзыв существует в базе данных
         self.assertTrue(Review.objects.filter(id=review.id).exists())
@@ -232,10 +180,7 @@ class ReviewTestCase(APITestCase):
         response = self.client.delete(url)
 
         # Проверяем статус ответа
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_204_NO_CONTENT
-        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Проверяем, что отзыв больше не существует в базе данных
         self.assertFalse(Review.objects.filter(id=review.id).exists())
