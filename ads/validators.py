@@ -55,7 +55,10 @@ class AdValidator:
         Returns:
             None
         """
-        if not price:
+        # if not price:
+        #     raise ValidationError("Поле цены обязательно для заполнения.")
+
+        if price is None:
             raise ValidationError("Поле цены обязательно для заполнения.")
 
         if price <= 0:
