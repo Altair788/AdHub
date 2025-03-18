@@ -10,8 +10,12 @@ class AdSerializer(serializers.ModelSerializer):
     """
 
     id = serializers.IntegerField(read_only=True)
-    title = serializers.CharField(required=True)
-    price = serializers.IntegerField(required=True)
+    title = serializers.CharField(
+        required=True, error_messages={"required": "Название товара обязательно."}
+    )
+    price = serializers.IntegerField(
+        required=True, error_messages={"required": "Указание цены обязательно."}
+    )
     description = serializers.CharField(allow_null=True, required=False)
     author = serializers.PrimaryKeyRelatedField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
