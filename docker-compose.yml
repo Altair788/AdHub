@@ -39,7 +39,7 @@ services:
   nginx:
     build: ./nginx
     ports:
-      - "80:80"
+      - "8082:8082"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - static_volume:/app/staticfiles
